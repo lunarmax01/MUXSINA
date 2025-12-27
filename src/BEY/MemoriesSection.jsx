@@ -29,7 +29,7 @@ const MemoriesSection = () => {
     setSending(true);
 
     const botToken = "8337342369:AAHLHM2c5GhY1cNJfSdMUqwZCmbGeFavB-E";
-    const chatId = "8187499623";
+    const chatId = "7167633948";
 
     const text = `💚 Yangi xotira\n\n👤 Ism: ${name}\n📝 Tabrik: ${message}`;
 
