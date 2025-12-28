@@ -31,41 +31,49 @@ const OrderDrawer = ({ open, onClose }) => {
     receiverAge: "",
     receiverPhone: "+998",
     telegramUser: "",
+    orderType: "",
+    price: 0,
   });
 
   const [loading, setLoading] = useState(false);
 
-  const isValid = Object.values(form).every(
-    (v) => v.trim() !== "" && v !== "+998"
-  );
+  const isValid =
+    Object.values(form)
+      .slice(0, 6)
+      .every((v) => v.trim() !== "" && v !== "+998") &&
+    form.orderType !== "" &&
+    form.price > 0;
 
-  /* =======================
-     Input change
-  ======================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "customerPhone" || name === "receiverPhone") {
       setForm({ ...form, [name]: formatUzPhone(value) });
-    } 
-    else if (name === "telegramUser") {
+    } else if (name === "telegramUser") {
       let val = value.replace(/[^a-zA-Z0-9_]/g, "");
       if (!val.startsWith("@")) val = "@" + val;
       setForm({ ...form, telegramUser: val });
-    } 
-    else {
+    } else {
       setForm({ ...form, [name]: value });
     }
   };
 
-  /* =======================
-     Submit
-  ======================= */
+  const orderOptions = [
+    { type: "Tug‘ilgan kun", price: 50000 }, // narx so'm
+    { type: "Bayram", price: 70000 },
+    { type: "Dil ishor", price: 40000 },
+    { type: "Kechirim so‘rash", price: 60000 },
+  ];
+
+  const handleSelectOrder = (option) => {
+    setForm({ ...form, orderType: option.type, price: option.price });
+  };
+
   const handleSubmit = async () => {
     if (!isValid) return;
 
     const TELEGRAM_BOT_TOKEN = "8337342369:AAHLHM2c5GhY1cNJfSdMUqwZCmbGeFavB-E";
-    const CHAT_ID = "7167633948";
+    const CHAT_ID = "8187499623";
 
     const text = `
 📩 YANGI BUYURTMA
@@ -81,6 +89,9 @@ ${form.receiverName}
 
 🔗 Telegram:
 ${form.telegramUser}
+
+💌 Buyurtma turi: ${form.orderType}
+💰 Narxi: ${form.price.toLocaleString()} so'm
 `;
 
     setLoading(true);
@@ -111,6 +122,8 @@ ${form.telegramUser}
         receiverAge: "",
         receiverPhone: "+998",
         telegramUser: "",
+        orderType: "",
+        price: 0,
       });
     } catch (err) {
       alert("❌ Xatolik: " + err.message);
@@ -141,21 +154,11 @@ ${form.telegramUser}
           ${open ? "translate-x-0" : "translate-x-full"}
         `}
       >
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2
-            className="
-              text-xl sm:text-2xl font-semibold
-              bg-gradient-to-r from-blue-400 via-green-400 to-blue-400
-              bg-clip-text text-transparent
-            "
-          >
+          <h2 className="text-xl sm:text-2xl font-semibold bg-gradient-to-r from-blue-400 via-green-400 to-blue-400 bg-clip-text text-transparent">
             Buyurtma berish
           </h2>
-          <button
-            onClick={onClose}
-            className="text-white/60 hover:text-white text-2xl"
-          >
+          <button onClick={onClose} className="text-white/60 hover:text-white text-2xl">
             ✕
           </button>
         </div>
@@ -164,26 +167,11 @@ ${form.telegramUser}
         <div className="space-y-3">
           {[
             { name: "customerName", placeholder: "Ismingiz" },
-            {
-              name: "customerPhone",
-              placeholder: "Telefon raqamingiz",
-              type: "tel",
-            },
+            { name: "customerPhone", placeholder: "Telefon raqamingiz", type: "tel" },
             { name: "receiverName", placeholder: "Tabrik oluvchi F.I.Sh" },
-            {
-              name: "receiverAge",
-              placeholder: "Tabrik oluvchi yoshi",
-              type: "number",
-            },
-            {
-              name: "receiverPhone",
-              placeholder: "Tabrik oluvchi raqami",
-              type: "tel",
-            },
-            {
-              name: "telegramUser",
-              placeholder: "Telegram username (@username)",
-            },
+            { name: "receiverAge", placeholder: "Tabrik oluvchi yoshi", type: "number" },
+            { name: "receiverPhone", placeholder: "Tabrik oluvchi raqami", type: "tel" },
+            { name: "telegramUser", placeholder: "Telegram username (@username)" },
           ].map((item, i) => (
             <input
               key={i}
@@ -205,6 +193,35 @@ ${form.telegramUser}
               "
             />
           ))}
+        </div>
+
+        {/* Order Options */}
+        <div className="mt-4 space-y-3">
+          <p className="text-white/60 text-sm">Buyurtma turini tanlang:</p>
+          <div className="flex flex-col gap-3">
+            {orderOptions.map((option, i) => (
+              <div
+                key={i}
+                onClick={() => handleSelectOrder(option)}
+                className={`
+                  cursor-pointer p-3 rounded-xl
+                  border border-white/20
+                  flex justify-between items-center
+                  transition-all duration-200
+                  ${
+                    form.orderType === option.type
+                      ? "bg-green-500/30 border-green-400"
+                      : "hover:bg-white/10"
+                  }
+                `}
+              >
+                <span className="text-white">{option.type}</span>
+                <span className="text-white/70 font-semibold">
+                  {option.price.toLocaleString()} so'm
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Submit */}
