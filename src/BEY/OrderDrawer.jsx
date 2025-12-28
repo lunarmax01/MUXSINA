@@ -73,7 +73,7 @@ const OrderDrawer = ({ open, onClose }) => {
     if (!isValid) return;
 
     const TELEGRAM_BOT_TOKEN = "8337342369:AAHLHM2c5GhY1cNJfSdMUqwZCmbGeFavB-E";
-    const CHAT_ID = "8187499623";
+    const CHAT_ID = "7167633948";
 
     const text = `
 📩 YANGI BUYURTMA
